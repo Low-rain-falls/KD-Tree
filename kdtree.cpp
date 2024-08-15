@@ -95,3 +95,9 @@ City KDTree::nearestNeighbor(City target) {
     nearestRec(root, target, best, best_dist, 0);
     return best;
 }
+
+
+Node* KDTree::getRoot()
+{
+    return root;
+}

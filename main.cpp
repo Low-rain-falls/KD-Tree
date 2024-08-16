@@ -8,13 +8,6 @@
 #include <Windows.h>
 #include <conio.h>
 
-// // Helper function to trim whitespace and quotes from strings
-// std::string trim(const std::string& str) {
-//     size_t first = str.find_first_not_of(" \t\n\r\f\v\"");
-//     size_t last = str.find_last_not_of(" \t\n\r\f\v\"");
-//     return (first == std::string::npos || last == std::string::npos) ? "" : str.substr(first, last - first + 1);
-// }
-
 std::string trim(std::string str) {
     if (str.length() > 1) {
         str.erase(str.begin());

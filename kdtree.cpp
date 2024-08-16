@@ -96,7 +96,6 @@ City KDTree::nearestNeighbor(City target) {
     return best;
 }
 
-
 Node* KDTree::getRoot()
 {
     return root;

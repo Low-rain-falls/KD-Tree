@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cmath>
 
+#define M_PI 3.14159265358979323846
+
 struct City {
     std::string name;
     double latitude;
@@ -33,6 +35,8 @@ public:
     void insert(City city);
     std::vector<City> rangeSearch(double lat_min, double lng_min, double lat_max, double lng_max);
     City nearestNeighbor(City target);
+    Node* getRoot(); 
+    Node*& getRootAddress();
 };
 
 #endif

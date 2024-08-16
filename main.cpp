@@ -93,11 +93,12 @@ void insertCity(KDTree& tree)
 {
     std::cout << "Input city name: ";
     std::string city_ascii;
-    std::cin.ignore();
+    //std::cin.ignore();
     getline(std::cin, city_ascii);
     std::cout << "Input latitude, longitude: ";
     double latitude, longitude;
     std::cin >> latitude >> longitude;
+    std::cin.ignore();
     tree.insert({ city_ascii, latitude, longitude });
 }
 
@@ -170,6 +171,7 @@ void findNearest(KDTree tree)
     std::cout << "Input latitude, longitude: ";
     double latitude, longitude;
     std::cin >> latitude >> longitude;
+    std::cin.ignore();
     // Example of nearest neighbor search
     City target = { "Nearest_city", latitude, longitude }; // Target city with arbitrary coordinates
     City nearestCity = tree.nearestNeighbor(target);
@@ -182,6 +184,7 @@ void queryCity(KDTree tree)
     std::cout << "Input min_latitude, min_longitude, max_latitude, max_longitude: ";
     double min_latitude, min_longitude, max_latitude, max_longitude;
     std::cin >> min_latitude >> min_longitude >> max_latitude >> max_longitude;
+    std::cin.ignore();
     std::vector<City> citiesInRange = tree.rangeSearch(min_latitude, min_longitude, max_latitude, max_longitude);
     std::cout << "Cities in range:" << std::endl;
     for (const auto& city : citiesInRange) 
@@ -201,14 +204,97 @@ void printTer(Node* pRoot)
     printTer(pRoot->right);
 }
 
-void printFile(KDTree tree)
+void pre_order(Node* pRoot, std::fstream& out)
 {
+    if (pRoot == nullptr)
+    {
+        return;
+    }
 
+    std::string name = pRoot->city.name;
+
+    // Apply XOR to the string to obfuscate it
+    for (char& c : name)
+    {
+        c ^= 0xAA;  // XOR each character
+    }
+
+    // Write the length of the name
+    size_t nameLength = name.size();
+    out.write(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+
+    // Write the XOR-ed name
+    out.write(name.c_str(), nameLength);
+
+    // Write latitude and longitude
+    out.write(reinterpret_cast<char*>(&pRoot->city.latitude), sizeof(pRoot->city.latitude));
+    out.write(reinterpret_cast<char*>(&pRoot->city.longitude), sizeof(pRoot->city.longitude));
+
+    // Recurse on the left and right children
+    pre_order(pRoot->left, out);
+    pre_order(pRoot->right, out);
 }
 
-void readFile(KDTree tree)
+void printFile(KDTree tree)
 {
+    std::string fileName;
+    std::cout << "Input file name: ";
+    getline(std::cin, fileName);
+    std::fstream out(fileName, std::ios::out | std::ios::binary);
+    
+    if (!out)
+    {
+        std::cout << "Can not open file" << std::endl;
+        return;
+    }
+    pre_order(tree.getRoot(), out);
+}
 
+void readFile(KDTree& tree)
+{
+    std::string fileName;
+    std::cout << "Input file name: ";
+    getline(std::cin, fileName);
+    std::fstream in(fileName, std::ios::in | std::ios::binary);
+    if (!in)
+    {
+        std::cout << "Cannot open file" << std::endl;
+        return;
+    }
+
+    while (in)
+    {
+        // Read string length first
+        size_t nameLength;
+        in.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+
+        // Ensure valid reading before continuing
+        if (in.eof() || in.fail()) break;
+
+        // Read the XOR-ed string data
+        std::string name(nameLength, '\0');
+        in.read(&name[0], nameLength);
+
+        // XOR the string back to its original form
+        for (char& c : name)
+        {
+            c ^= 0xAA;
+        }
+
+        // Read latitude and longitude
+        double lat, lon;
+        in.read(reinterpret_cast<char*>(&lat), sizeof(lat));
+        in.read(reinterpret_cast<char*>(&lon), sizeof(lon));
+
+        // Ensure valid reading before inserting into the tree
+        if (in.eof() || in.fail()) break;
+
+        // Insert the data into the tree
+        tree.insert({ name, lat, lon });  // Assuming tree.insert takes a struct or similar
+    }
+
+    in.close();
+    std::cout << "File read successfully and tree reconstructed." << std::endl;
 }
 
 void printChoice(int choose)

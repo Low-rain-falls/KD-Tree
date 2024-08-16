@@ -663,6 +663,7 @@ void menu()
             break;
         }
     } while (choose != 11);
+    removeTree(tree.getRootAddress());
     return;
 }
 

@@ -1,9 +1,7 @@
 #include "kdtree.h"
 
-// Constructor
 KDTree::KDTree() : root(nullptr) {}
 
-// Recursive insertion function
 Node* KDTree::insertRec(Node* node, City city, unsigned depth) {
     if (node == nullptr) {
         return new Node(city);
@@ -18,12 +16,12 @@ Node* KDTree::insertRec(Node* node, City city, unsigned depth) {
     return node;
 }
 
-// Insertion wrapper function
+
 void KDTree::insert(City city) {
     root = insertRec(root, city, 0);
 }
 
-// Range search recursive function
+
 void KDTree::rangeSearchRec(Node* node, double lat_min, double lng_min, double lat_max, double lng_max, std::vector<City>& result, unsigned depth) {
     if (node == nullptr) return;
 
@@ -42,16 +40,16 @@ void KDTree::rangeSearchRec(Node* node, double lat_min, double lng_min, double l
     }
 }
 
-// Range search wrapper function
+
 std::vector<City> KDTree::rangeSearch(double lat_min, double lng_min, double lat_max, double lng_max) {
     std::vector<City> result;
     rangeSearchRec(root, lat_min, lng_min, lat_max, lng_max, result, 0);
     return result;
 }
 
-// Haversine distance function
+
 double KDTree::haversine(double lat1, double lon1, double lat2, double lon2) {
-    const double R = 6371; // Earth radius in km
+    const double R = 6371; 
     double dLat = (lat2 - lat1) * M_PI / 180.0;
     double dLon = (lon2 - lon1) * M_PI / 180.0;
 
@@ -64,7 +62,7 @@ double KDTree::haversine(double lat1, double lon1, double lat2, double lon2) {
     return R * c;
 }
 
-// Nearest neighbor recursive function
+
 void KDTree::nearestRec(Node* node, City target, City& best, double& best_dist, unsigned depth) {
     if (node == nullptr) return;
 
@@ -88,7 +86,7 @@ void KDTree::nearestRec(Node* node, City target, City& best, double& best_dist, 
     }
 }
 
-// Nearest neighbor wrapper function
+
 City KDTree::nearestNeighbor(City target) {
     City best = root->city;
     double best_dist = haversine(root->city.latitude, root->city.longitude, target.latitude, target.longitude);

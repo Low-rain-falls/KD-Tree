@@ -24,14 +24,16 @@ struct Node {
 class KDTree {
 private:
     Node* root;
-    
+
     Node* insertRec(Node* node, City city, unsigned depth);
     void rangeSearchRec(Node* node, double lat_min, double lng_min, double lat_max, double lng_max, std::vector<City>& result, unsigned depth);
     double haversine(double lat1, double lon1, double lat2, double lon2);
     void nearestRec(Node* node, City target, City& best, double& best_dist, unsigned depth);
+    void deleteTree(Node* node);
 
 public:
     KDTree();
+    ~KDTree();
     void insert(City city);
     std::vector<City> rangeSearch(double lat_min, double lng_min, double lat_max, double lng_max);
     City nearestNeighbor(City target);

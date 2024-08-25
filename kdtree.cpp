@@ -3,14 +3,15 @@
 KDTree::KDTree() : root(nullptr) {}
 
 KDTree::~KDTree() {
-    deleteTree(root);  
+    deleteTree(root);
 }
 
-void KDTree::deleteTree(Node* node) {
+void KDTree::deleteTree(Node*& node) {
     if (node == nullptr) return;  
     deleteTree(node->left);   
     deleteTree(node->right);  
     delete node;  
+    node = nullptr;
 }
 
 Node* KDTree::insertRec(Node* node, City city, unsigned depth) {
